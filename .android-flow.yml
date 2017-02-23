@@ -1,0 +1,36 @@
+########################
+# TODO: rename to .flow.yml and copy to project root if use this configuration in your project
+########################
+
+flows:
+  - name: default
+    language: android
+    version: jdk8
+    env:
+      - FLOW_PROJECT_PATH=./MPAndroidChart
+    
+    trigger:
+      push:
+        - develop
+        - master
+      pull_request: true
+      
+    steps:
+      - name: Init
+        plugin:
+          name: android_init
+          
+      - name: Git Clone
+        plugin:
+          name: git
+          
+      - name: Build
+        plugin:
+          name: android_build
+          
+      - name: Emulator
+        plugin:
+          name: android_emulator
+          inputs:
+            - FLOW_ANDROID_SDK_VERSION=android-23
+            - FLOW_ANDROID_CPU_VERSION=armeabi-v7a
