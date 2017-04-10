@@ -45,6 +45,7 @@ flows:
       tag:
         - release*
       pull_request: true
+      
     steps:
       - name: Init
         plugin:
