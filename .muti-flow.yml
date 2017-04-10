@@ -1,1 +1,73 @@
-
+flows:
+  - name: default
+    language: android
+    version: jdk8
+    trigger:
+      push:
+        - develop
+      pull_request: true
+    steps:
+      - name: Init
+        plugin:
+          name: android_init
+      - name: Git Clone
+        plugin:
+          name: git
+          
+      - name: Memory
+        scripts:
+         - export ANDROID_OPTS='-Xms4g -Xmx4g'          
+      - name: Build
+        plugin:
+          name: android_build
+          
+      - name: Emulator
+        plugin:
+          name: android_emulator
+          inputs:
+            - FLOW_ANDROID_SDK_VERSION=android-23
+            - FLOW_ANDROID_CPU_VERSION=armeabi-v7a          
+          
+    finalize:
+      email:
+        success:
+          - gy@fir.im
+        failure:
+          - gy@fir.im
+         
+# flow for deploy to fir         
+  - name: deploy
+    language: android
+    version: jdk8
+    trigger:
+      push:
+        - master
+      tag:
+        - release*
+      pull_request: true
+    steps:
+      - name: Init
+        plugin:
+          name: android_init
+      - name: Git Clone
+        plugin:
+          name: git
+      - name: Build
+        plugin:
+          name: android_build
+          
+      - name: fir upload
+        enable: true
+        failure: false
+        plugin:
+          name: fir_plugin
+          inputs:
+            - FIR_API_TOKEN=352c3d571fa37474841adaca000c60e3
+            - FIR_CHANGELOG='test change log $FLOW_EVENT_NUMBER'          
+          
+    finalize:
+      email:
+        success:
+          - gy@fir.im
+        failure:
+          - gy@fir.im
